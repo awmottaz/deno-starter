@@ -1,0 +1,10 @@
+scripts:
+  # Fetches deps and updates lockfile
+  lock_deps: DENO_DIR=./deno_dir deno cache --lock=lock.json --lock-write src/deps.ts
+
+  # Fetches deps and verifies against lockfile
+  install_deps: DENO_DIR=./deno_dir deno cache --reload --lock=lock.json src/deps.ts
+
+  dev: DENO_DIR=./deno_dir deno run --lock=lock.json src/main.ts
+
+  build: DENO_DIR=./deno_dir deno compile --output lci --lock=lock.json --cached-only src/main.ts
