@@ -1,10 +1,34 @@
+# These scripts are executed with Velociraptor. See the README for details.
 scripts:
-  # Fetches deps and updates lockfile
-  lock_deps: DENO_DIR=./deno_dir deno cache --lock=lock.json --lock-write src/deps.ts
+  deps:
+    desc: Installs missing dependencies and updates the lockfile
+    cmd: DENO_DIR=./deno_dir deno cache --lock=lock.json --lock-write src/deps.ts
 
-  # Fetches deps and verifies against lockfile
-  install_deps: DENO_DIR=./deno_dir deno cache --reload --lock=lock.json src/deps.ts
+  dev_deps:
+    desc: Installs missing developer dependencies and updates the lockfile
+    cmd: DENO_DIR=./deno_dir deno cache --lock=lock.dev.json --lock-write devDeps.ts
 
-  dev: DENO_DIR=./deno_dir deno run --lock=lock.json src/main.ts
+  deps_ci:
+    desc: Performs a fresh download of all dependencies and verifies their integrity against the lockfile
+    cmd: DENO_DIR=./deno_dir deno cache --reload --lock=lock.json src/deps.ts
 
-  build: DENO_DIR=./deno_dir deno compile --output lci --lock=lock.json --cached-only src/main.ts
+  dev:
+    desc: Execute the main file
+    cmd: DENO_DIR=./deno_dir deno run --lock=lock.json src/main.ts
+
+  lint:
+    desc: Lint all of your TypeScript files
+    cmd: deno lint --ignore=deno_dir
+
+  fmt:
+    desc: Format all of your files
+    cmd: deno fmt --ignore=deno_dir
+
+  pre-commit:
+    desc: Scripts to run before every commit
+    cmd:
+      - vr lint
+      - vr fmt
+    # gitHook not currently working for me
+    # see https://github.com/jurassiscripts/velociraptor/issues/73
+    # gitHook: pre-commit
